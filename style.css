@@ -1,175 +1,173 @@
-/* 定义深浅色模式的 CSS 变量 */
+/* 基础变量 */
 :root {
-    --background-color: #f5f5f5;
-    --text-color: #333;
-    --container-bg: #fff;
-    --folder-color: #2575fc;
-    --file-color: #555;
-    --input-bg: #f9f9f9;
-    --button-bg: #2575fc;
-    --button-hover-bg: #1a5bbf;
-    --error-color: #ff4757;
+    --primary-color: #6366f1;
+    --secondary-color: #a855f7;
+    --background-base: hsl(240 10% 96%);
+    --text-color: hsl(240 10% 15%);
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --button-hover: #4f46e5;
 }
 
 [data-theme="dark"] {
-    --background-color: #1e1e1e;
-    --text-color: #f5f5f5;
-    --container-bg: #2a2a2a;
-    --folder-color: #ff9f43;
-    --file-color: #f5f5f5;
-    --input-bg: #3a3a3a;
-    --button-bg: #ff9f43;
-    --button-hover-bg: #ff7f00;
-    --error-color: #ff6b6b;
+    --background-base: hsl(240 10% 5%);
+    --text-color: hsl(240 10% 90%);
+    --card-bg: rgba(17, 17, 17, 0.8);
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* 基础样式 */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--background-color);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg,
+    oklch(0.75 0.15 260),
+    oklch(0.85 0.1 300));
     color: var(--text-color);
     margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
-    transition: background 0.3s ease, color 0.3s ease;
+    display: grid;
+    place-items: center;
+    transition: background 0.3s ease;
 }
 
 .container {
-    background: var(--container-bg);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    width: 100%;
-    position: relative;
-    transition: background 0.3s ease;
+    width: min(90%, 680px);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
 }
 
-/* 深浅色模式切换按钮 */
+/* 主题切换按钮 */
 .theme-toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.5rem;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    display: grid;
+    place-items: center;
     cursor: pointer;
-    user-select: none;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .theme-toggle:hover {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(180deg);
 }
 
-/* 文件资源管理器样式 */
-#file-explorer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.folder, .file {
-    padding: 15px;
-    background: var(--input-bg);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.folder:hover, .file:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
+/* 文件列表样式 */
+.file-tree {
+    display: grid;
+    gap: 0.75rem;
 }
 
 .folder {
-    font-weight: 600;
-    color: var(--folder-color);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: background 0.2s ease;
 }
 
-.file {
-    font-weight: 500;
-    color: var(--file-color);
-}
-
-/* 文件夹子内容的样式 */
-.children {
-    margin-left: 20px; /* 左边距，用于缩进子内容 */
-    margin-top: 10px; /* 上边距，用于与父文件夹的间距 */
-    overflow: hidden; /* 隐藏超出部分，确保收起时内容不会溢出 */
-    max-height: 0; /* 初始最大高度为 0，表示收起状态 */
-    opacity: 0; /* 初始透明度为 0，表示完全透明 */
-    transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 文件夹展开时的子内容样式 */
-.folder.open .children {
-    max-height: 500px; /* 设置一个足够大的最大高度，确保内容完全展开 */
-    opacity: 1; /* 完全显示，透明度为 1 */
-}
-
-/* 文件夹收起时的子内容样式 */
-.folder:not(.open) .children {
-    max-height: 0; /* 最大高度为 0，表示收起状态 */
-    opacity: 1; /* 完全透明，表示隐藏状态 */
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 提取码输入框样式 */
-.download-prompt {
-    margin-top: 10px;
-    padding: 10px;
-    background: var(--input-bg);
-    border-radius: 8px;
-}
-
-.download-prompt input {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 200px;
-    font-size: 0.9rem;
-    background: var(--input-bg);
-    color: var(--text-color);
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-.download-prompt input:focus {
-    border-color: var(--folder-color);
-    outline: none;
-}
-
-.download-prompt button {
-    padding: 8px 12px;
-    background: var(--button-bg);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
+.folder-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     cursor: pointer;
-    font-size: 0.9rem;
+    user-select: none;
+}
+
+.folder-icon {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.folder.open .folder-icon {
+    transform: rotate(90deg);
+}
+
+.folder-name {
     font-weight: 600;
-    transition: background 0.3s ease;
+    color: var(--text-color);
 }
 
-.download-prompt button:hover {
-    background: var(--button-hover-bg);
+/* 文件项样式 */
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-left: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.error-message {
-    color: var(--error-color);
+.file-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
+}
+
+/* 动态内容区域 */
+.folder-content {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition:
+            max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.3s ease-out;
+}
+
+.folder.open .folder-content {
+    max-height: 800px;
+    opacity: 1;
+}
+
+/* 提取码输入框 */
+.download-prompt {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.extract-input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.extract-input:focus {
+    outline: 2px solid var(--primary-color);
+    border-color: transparent;
+}
+
+.download-btn {
+    padding: 0.5rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+    background: var(--button-hover);
+    transform: scale(1.05);
+}
+
+.error-msg {
+    color: #ef4444;
     font-size: 0.9rem;
-    margin-top: 5px;
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    margin-top: 0.5rem;
 }

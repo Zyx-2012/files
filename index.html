@@ -3,35 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件下载</title>
+    <title>文件下载中心</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <!-- 深浅色模式切换按钮 -->
-    <div class="theme-toggle" onclick="toggleTheme()">
-        🌓
-    </div>
+<div class="theme-toggle" onclick="toggleTheme()">🌓</div>
 
-    <h1>文件下载</h1>
-    <div id="file-explorer">
-        <!-- 手动添加文件夹和文件 -->
-        <div class="folder" onclick="toggleFolder(this)">
-            JetBrains激活
-            <div class="children">
-                <div class="file" onclick="showDownloadPrompt('win2020-2024(一键激活).zip', '1')">
+<div class="container">
+    <h1>开发工具激活包</h1>
+    <div class="file-tree">
+        <!-- JetBrains 激活包 -->
+        <div class="folder">
+            <div class="folder-header" onclick="toggleFolder(this.parentElement)">
+                <svg class="folder-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                </svg>
+                <span class="folder-name">JetBrains激活</span>
+            </div>
+            <div class="folder-content">
+                <div class="file-item" data-file="JetBrains激活/win2020-2024(一键激活).zip" data-code="win"><!-- 居然找到这里来了！那就把提取码拿走吧！ -->
                     win2020-2024(一键激活).zip
                 </div>
-                <div class="file" onclick="showDownloadPrompt('mac2020-2024(一键激活).zip', '2')">
+                <div class="file-item" data-file="JetBrains激活/mac2020-2024(一键激活).zip" data-code="mac"><!-- 居然找到这里来了！那就把提取码拿走吧！ -->
                     mac2020-2024(一键激活).zip
                 </div>
-                <div class="file" onclick="showDownloadPrompt('linux2020-2024.zip', '3')">
+                <div class="file-item" data-file="JetBrains激活/linux2020-2024.zip" data-code="linux"><!-- 居然找到这里来了！那就把提取码拿走吧！ -->
                     linux2020-2024.zip
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>

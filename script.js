@@ -1,66 +1,80 @@
-// 切换深浅色模式
-function toggleTheme() {
-    const body = document.body;
-    const currentTheme = body.getAttribute("data-theme");
-
-    if (currentTheme === "dark") {
-        body.setAttribute("data-theme", "light");
-        localStorage.setItem("theme", "light");
-    } else {
-        body.setAttribute("data-theme", "dark");
-        localStorage.setItem("theme", "dark");
-    }
+// 切换文件夹状态
+function toggleFolder(folder) {
+    folder.classList.toggle('open');
 }
 
-// 初始化深浅色模式
-function initTheme() {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.body.setAttribute("data-theme", savedTheme);
-}
+// 显示下载提示
+function showDownloadPrompt(fileItem) {
+    const fileName = fileItem.getAttribute('data-file');
+    const code = fileItem.getAttribute('data-code');
+    let prompt = fileItem.querySelector('.download-prompt');
 
-// 初始化
-document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
-    renderFileExplorer();
-});
-
-// 其他函数保持不变
-function toggleFolder(folderElement) {
-    folderElement.classList.toggle("open");
-}
-
-function showDownloadPrompt(fileName, correctCode) {
-    const fileElement = event.currentTarget;
-    const existingPrompt = fileElement.querySelector(".download-prompt");
-
-    if (existingPrompt) {
-        existingPrompt.remove();
-    } else {
-        const prompt = document.createElement("div");
-        prompt.className = "download-prompt";
+    if (!prompt) {
+        prompt = document.createElement('div');
+        prompt.className = 'download-prompt';
         prompt.innerHTML = `
-            <input type="text" class="extract-code-input" placeholder="输入提取码">
-            <button onclick="downloadFile('${fileName}', '${correctCode}', this)">下载</button>
-            <p class="error-message"></p>
+            <input class="extract-input" placeholder="输入提取码 ${code ? '' : '(无密码)'}">
+            <button class="download-btn" onclick="handleDownload('${fileName}', '${code}', this)">下载</button>
+            <div class="error-msg"></div>
         `;
-        fileElement.appendChild(prompt);
+        fileItem.appendChild(prompt);
+
+        // 点击外部区域关闭输入框
+        const closePrompt = (event) => {
+            if (!fileItem.contains(event.target)) {
+                prompt.remove();
+                document.removeEventListener('click', closePrompt);
+            }
+        };
+        document.addEventListener('click', closePrompt);
+
+        // 按下回车键触发下载
+        const input = prompt.querySelector('.extract-input');
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                handleDownload(fileName, code, prompt.querySelector('.download-btn'));
+            }
+        });
     }
 }
 
-function downloadFile(fileName, correctCode, button) {
-    const input = button.previousElementSibling;
-    const errorMessage = button.nextElementSibling;
-    const userCode = input.value;
+// 处理下载
+function handleDownload(fileName, code, button) {
+    const prompt = button.parentElement;
+    const input = prompt.querySelector('.extract-input');
+    const errorMsg = prompt.querySelector('.error-msg');
+    const userCode = input.value.trim();
 
-    if (!correctCode || userCode === correctCode) {
-        errorMessage.textContent = "";
-        const link = document.createElement("a");
-        link.href = `/files/${fileName}`;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else {
-        errorMessage.textContent = "提取码错误，请重试！";
+    if (code && userCode !== code) {
+        errorMsg.textContent = '✗ 提取码错误';
+        input.focus();
+        return;
     }
+
+    errorMsg.textContent = '';
+    const link = document.createElement('a');
+    link.href = `/files/${fileName}`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    prompt.remove();
 }
+
+// 切换主题
+function toggleTheme() {
+    document.body.setAttribute('data-theme',
+        document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+    );
+}
+
+// 初始化事件监听
+document.addEventListener('DOMContentLoaded', () => {
+    const fileItems = document.querySelectorAll('.file-item');
+    fileItems.forEach((fileItem) => {
+        fileItem.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showDownloadPrompt(fileItem);
+        });
+    });
+});

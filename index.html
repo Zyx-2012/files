@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件下载</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <!-- 深浅色模式切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        🌓
+    </div>
+
+    <h1>文件下载</h1>
+    <div id="file-explorer">
+        <!-- 手动添加文件夹和文件 -->
+        <div class="folder" onclick="toggleFolder(this)">
+            JetBrains激活
+            <div class="children">
+                <div class="file" onclick="showDownloadPrompt('win2020-2024(一键激活).zip', '1')">
+                    win2020-2024(一键激活).zip
+                </div>
+                <div class="file" onclick="showDownloadPrompt('mac2020-2024(一键激活).zip', '2')">
+                    mac2020-2024(一键激活).zip
+                </div>
+                <div class="file" onclick="showDownloadPrompt('linux2020-2024.zip', '3')">
+                    linux2020-2024.zip
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
